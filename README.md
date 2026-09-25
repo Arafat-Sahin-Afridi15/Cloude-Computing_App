@@ -25,12 +25,12 @@ ai-cloud-service/
 
 ## Step-by-step: how I deployed this to Render
 
-### 1. Get a free OpenAI API key
-1. Go to https://platform.openai.com/api-keys and sign up / log in.
-2. Click "Create new secret key" and copy it (starts with `sk-...`).
-3. New accounts usually get a small free trial credit — enough for a class demo.
-   (If your trial has expired, any teammate's key or Google AI Studio's free
-   Gemini API key can be swapped in with a small code change — ask if you need this.)
+### 1. Get a free Google Gemini API key
+1. Go to https://aistudio.google.com/apikey and sign in with a Google account.
+2. Click "Create API key" (select or create a project if asked).
+3. Copy the key — it's a long string (no special prefix like OpenAI's `sk-`).
+4. This uses Google's free tier: no credit card required, generous daily limits
+   for a class demo.
 
 ### 2. Push the code to GitHub
 From inside the `ai-cloud-service` folder:
@@ -58,8 +58,8 @@ README/.gitignore there, since this project already has them.)
    - **Start Command:** `npm start`
    - **Instance Type:** Free
 5. Under **Environment Variables**, click **Add Environment Variable**:
-   - **Key:** `OPENAI_API_KEY`
-   - **Value:** (paste your OpenAI key from Step 1)
+   - **Key:** `GEMINI_API_KEY`
+   - **Value:** (paste your Gemini key from Step 1)
 6. Click **Create Web Service**.
 7. Render will build and deploy automatically. After a minute or two, you'll get a
    live URL like `https://ai-cloud-service-xxxx.onrender.com`.
@@ -72,7 +72,7 @@ README/.gitignore there, since this project already has them.)
 ```bash
 npm install
 cp .env.example .env
-# edit .env and paste your real OPENAI_API_KEY
+# edit .env and paste your real GEMINI_API_KEY
 npm start
 # open http://localhost:3000
 ```
