@@ -23,43 +23,53 @@ app.post("/api/ask", async (req, res) => {
       return res.status(400).json({ error: "Please provide a 'prompt' in the request body." });
     }
 
-    const apiKey = process.env.OPENAI_API_KEY;
+    const apiKey = process.env.GEMINI_API_KEY;
 
     if (!apiKey) {
       return res.status(500).json({
         error:
-          "Server is missing OPENAI_API_KEY. Add it in Render's Environment settings (see README).",
+          "Server is missing GEMINI_API_KEY. Add it in Render's Environment settings (see README).",
       });
     }
 
-    const response = await fetch("https://api.openai.com/v1/chat/completions", {
+    const model = "gemini-2.0-flash";
+    const url = `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent`;
+
+    const response = await fetch(url, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
-        Authorization: `Bearer ${apiKey}`,
+        "X-goog-api-key": apiKey,
       },
       body: JSON.stringify({
-        model: "gpt-4o-mini",
-        messages: [
+        contents: [
           {
-            role: "system",
-            content:
-              "You are a friendly, concise assistant embedded in a class demo web app. Keep answers short and clear.",
+            role: "user",
+            parts: [{ text: userPrompt }],
           },
-          { role: "user", content: userPrompt },
         ],
-        max_tokens: 300,
+        systemInstruction: {
+          parts: [
+            {
+              text: "You are a friendly, concise assistant embedded in a class demo web app. Keep answers short and clear.",
+            },
+          ],
+        },
+        generationConfig: {
+          maxOutputTokens: 300,
+        },
       }),
     });
 
     if (!response.ok) {
       const errText = await response.text();
-      console.error("OpenAI API error:", response.status, errText);
+      console.error("Gemini API error:", response.status, errText);
       return res.status(502).json({ error: "AI service error. Check server logs." });
     }
 
     const data = await response.json();
-    const reply = data.choices?.[0]?.message?.content?.trim() || "(no response)";
+    const reply =
+      data.candidates?.[0]?.content?.parts?.[0]?.text?.trim() || "(no response)";
 
     res.json({ reply });
   } catch (err) {
